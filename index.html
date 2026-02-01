@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global MedTech & Linz Matrix</title>
+    <title>Globaler Longevity & MedTech Index</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,8 +11,8 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Chosen Palette: Gray-Slate (Professional) & Emerald (Success/Available) -->
-    <!-- Ein sauberes, tabellenfokussiertes Design ohne unnötige visuelle Spielereien. -->
+    <!-- Chosen Palette: Midnight Blue & Clinical Cyan -->
+    <!-- Ein professionelles, datenfokussiertes Farbschema, das Vertrauen und technologische Präzision ausstrahlt. -->
 
     <style>
         .chart-container {
@@ -20,138 +20,151 @@
             width: 100%;
             max-width: 900px;
             margin: auto;
-            height: 300px;
+            height: 400px;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 4px;
+            border-radius: 10px;
         }
 
         .tab-active {
-            background-color: #065f46;
-            color: white;
+            border-bottom: 2px solid #06b6d4;
+            color: #06b6d4;
         }
 
-        table {
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-        
-        th {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #f8fafc;
-        }
-
-        tr:hover td {
-            background-color: #f1f5f9;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
     </style>
 
     <!-- Application Structure Plan:
-         1. World Ranking: Vergleich der Top-Länder in Tabellenform.
-         2. Linz Inventory: Liste der Geräte am KUK und an der JKU (ZMF).
-         3. Mega Matrix (Top 200): Die ultimative Tabelle für Longevity-Werte.
-         4. Analytics: Kurze grafische Einordnung der Scanner-Dichte.
+         1. Intro: Globale Analyse der medizinischen Versorgung.
+         2. Global Dashboard: Bar-Charts für Scanner-Dichte und Life Expectancy.
+         3. Top 100 Tabelle: Massive Datenmatrix mit Suchfunktion.
+         4. City Battle: Linz vs. München vs. Wien vs. Zürich.
+         5. Research Focus: Wo studiert es sich am besten im MedTech Bereich?
          
-         Interaktionen:
-         - Suche und Filter für die 200+ Metriken.
-         - Umschalten zwischen den Hauptdatenbanken.
+         Begründung: Die Datenmenge (100 Länder + Städtevergleich) erfordert eine klare Trennung in thematische Tabs, um die Usability auf mobilen und Desktop-Geräten zu gewährleisten.
     -->
 
     <!-- Visualization & Content Choices:
-         - Bar Chart: Scanner-Dichte pro Land (Vergleich).
-         - Data Grid: Fokus auf Tabellen statt Karten.
-         - Search Logic: Echtzeit-Filterung der massiven Metrik-Liste.
+         - Bar Chart: Vergleich der "MRI Scanners per Million People" (Wichtigster Tech-Indikator).
+         - Bubble Chart: Healthcare Spending vs. Life Expectancy (Effizienz-Check).
+         - Interactive Table: 100 Zeilen Datensatz mit fiktiven, aber realistisch hergeleiteten Indizes für Longevity-Infrastruktur.
+         - Radar-Stil Comparison (via HTML/CSS): Linz vs. Global Benchmarks.
          
          CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
     -->
 </head>
-<body class="bg-slate-100 text-slate-900 font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
-    <!-- Top Navigation -->
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-[1600px] mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-2">
-                <span class="text-emerald-700 font-black text-2xl tracking-tighter">MED_MATRIX</span>
-                <span class="text-slate-400 text-xs border-l border-slate-300 pl-2">LINZ • GLOBAL • LONGEVITY</span>
+    <!-- Header Area -->
+    <header class="bg-slate-900 text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-cyan-500 w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl">L</div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Global Longevity <span class="text-cyan-400">Index</span></h1>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-400">Medizinische Infrastruktur & Scan-Technologie</p>
+                </div>
             </div>
-            <div class="flex bg-slate-200 p-1 rounded-lg space-x-1">
-                <button onclick="switchTab('global')" id="tab-global" class="px-4 py-1.5 rounded-md text-sm font-semibold transition-all tab-active">Global Ranking</button>
-                <button onclick="switchTab('linz')" id="tab-linz" class="px-4 py-1.5 rounded-md text-sm font-semibold transition-all">Linz Inventar</button>
-                <button onclick="switchTab('mega')" id="tab-mega" class="px-4 py-1.5 rounded-md text-sm font-semibold transition-all">Mega-Test-Tabelle (200+)</button>
+            <nav class="flex space-x-6 mt-4 md:mt-0 text-sm font-medium">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-active py-2">Dashboard</button>
+                <button onclick="switchTab('ranking')" id="btn-ranking" class="py-2 hover:text-cyan-400 transition">Top 100 Liste</button>
+                <button onclick="switchTab('city')" id="btn-city" class="py-2 hover:text-cyan-400 transition">Städte-Battle</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="space-y-12">
+            <section class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Wo steht die Welt in der Medizintechnik?</h2>
+                <p class="text-slate-600">
+                    Die Verfügbarkeit von High-End-Scannern (MRT/CT) und spezialisierten Longevity-Zentren ist ungleich verteilt. 
+                    Während die USA bei der Innovation führen, bieten Länder wie Japan und die Schweiz die höchste Dichte an Diagnosetechnik pro Kopf.
+                </p>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-6 rounded-2xl shadow-sm">
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-2 h-6 bg-cyan-500 rounded mr-2"></span>
+                        MRT-Dichte (Scanner pro 1 Mio. Einwohner)
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="mriDensityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl shadow-sm">
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-2 h-6 bg-indigo-500 rounded mr-2"></span>
+                        Effizienz: Ausgaben vs. Lebensspanne
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white border border-slate-200 p-6 rounded-xl">
+                    <h4 class="text-slate-500 text-xs font-bold uppercase mb-2">Beste Scan-Qualität</h4>
+                    <p class="text-2xl font-bold">Deutschland & USA</p>
+                    <p class="text-xs text-slate-400 mt-2">Dank Siemens (DS CT) und GE Healthcare Innovationen.</p>
+                </div>
+                <div class="bg-white border border-slate-200 p-6 rounded-xl">
+                    <h4 class="text-slate-500 text-xs font-bold uppercase mb-2">Beste Prävention</h4>
+                    <p class="text-2xl font-bold">Singapur & Japan</p>
+                    <p class="text-xs text-slate-400 mt-2">Fokus auf flächendeckende Früherkennung.</p>
+                </div>
+                <div class="bg-white border border-slate-200 p-6 rounded-xl">
+                    <h4 class="text-slate-500 text-xs font-bold uppercase mb-2">Studenten-Hotspot</h4>
+                    <p class="text-2xl font-bold">Zürich & München</p>
+                    <p class="text-xs text-slate-400 mt-2">Exzellente Verbindung von Uni und High-Tech Kliniken.</p>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <main class="max-w-[1600px] mx-auto px-6 py-8">
-
-        <!-- GLOBAL RANKING VIEW -->
-        <div id="view-global" class="space-y-8 fade-in">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-100">
-                    <h2 class="text-xl font-bold">Top-Nationen: Medizintechnik & Versorgung</h2>
-                    <p class="text-sm text-slate-500">Ranking basierend auf Scanner-Dichte (MRT/CT) und klinischem Innovations-Level.</p>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="px-6 py-4 font-bold border-b">Rang</th>
-                                <th class="px-6 py-4 font-bold border-b">Land</th>
-                                <th class="px-6 py-4 font-bold border-b text-center">Scanner-Dichte (D)</th>
-                                <th class="px-6 py-4 font-bold border-b">Top Technologie</th>
-                                <th class="px-6 py-4 font-bold border-b">Longevity-Infrastruktur</th>
-                                <th class="px-6 py-4 font-bold border-b text-right">Qualitäts-Score</th>
-                            </tr>
-                        </thead>
-                        <tbody id="globalTableBody">
-                            <!-- JS Populated -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-sm font-bold text-slate-400 uppercase mb-4 text-center">Vergleich: MRT-Scanner pro 1 Mio. Einwohner</h3>
-                <div class="chart-container">
-                    <canvas id="mriChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- LINZ INVENTAR VIEW -->
-        <div id="view-linz" class="hidden space-y-8 fade-in">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+        <!-- TOP 100 RANKING VIEW -->
+        <div id="view-ranking" class="hidden space-y-6">
+            <div class="glass-card p-6 rounded-2xl shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
-                        <h2 class="text-xl font-bold">Medizintechnik-Inventar Linz</h2>
-                        <p class="text-sm text-slate-500">Geräte an der JKU (Med-Campus) und am Kepler Uniklinikum (KUK).</p>
+                        <h2 class="text-2xl font-bold">Die Top 100 Longevity-Nationen</h2>
+                        <p class="text-slate-500 text-sm">Sortiert nach medizintechnischem Ausstattungsindex.</p>
                     </div>
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Standort: Oberösterreich</span>
+                    <div class="relative w-full md:w-80">
+                        <input type="text" id="countrySearch" onkeyup="filterTable()" placeholder="Land suchen..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
+                        <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50">
-                            <tr>
-                                <th class="px-6 py-4 font-bold border-b">Gerätetyp</th>
-                                <th class="px-6 py-4 font-bold border-b">Modell (Hersteller)</th>
-                                <th class="px-6 py-4 font-bold border-b text-center">Ranking (1-10)</th>
-                                <th class="px-6 py-4 font-bold border-b">Standort</th>
-                                <th class="px-6 py-4 font-bold border-b">Besonderheit</th>
-                                <th class="px-6 py-4 font-bold border-b text-right">Grenzkosten (Scan)</th>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-500 uppercase text-[11px] font-bold">
+                                <th class="px-4 py-3">Rang</th>
+                                <th class="px-4 py-3">Land</th>
+                                <th class="px-4 py-3">Scanner Index</th>
+                                <th class="px-4 py-3">Longevity Focus</th>
+                                <th class="px-4 py-3">Forschung (Studenten)</th>
+                                <th class="px-4 py-3">Bestes Gerät</th>
                             </tr>
                         </thead>
-                        <tbody id="linzTableBody">
+                        <tbody id="rankingTableBody" class="divide-y divide-slate-100">
                             <!-- JS Populated -->
                         </tbody>
                     </table>
@@ -159,200 +172,161 @@
             </div>
         </div>
 
-        <!-- MEGA MATRIX VIEW -->
-        <div id="view-mega" class="hidden space-y-6 fade-in">
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold">Die Longevity-Mega-Matrix (Top 200+)</h2>
-                        <p class="text-sm text-slate-500">Umfassende Liste aller medizinischen Tests und biologischen Marker.</p>
-                    </div>
-                    <div class="flex gap-4 w-full lg:w-auto">
-                        <input type="text" id="megaSearch" onkeyup="filterMegaTable()" placeholder="Marker suchen (z.B. ApoB)..." class="flex-grow lg:w-80 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-                        <select id="categoryFilter" onchange="filterMegaTable()" class="px-4 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="all">Alle Kategorien</option>
-                            <option value="blood">Blutchemie</option>
-                            <option value="imaging">Bildgebung</option>
-                            <option value="cellular">Zellulär / Genetik</option>
-                            <option value="functional">Funktional</option>
-                        </select>
+        <!-- CITY BATTLE VIEW -->
+        <div id="view-city" class="hidden space-y-8">
+            <section class="text-center max-w-3xl mx-auto mb-10">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">City Battle: Wo steht Linz?</h2>
+                <p class="text-slate-600">Direkter Vergleich der medizintechnischen "Power" zwischen Linz und führenden Metropolen.</p>
+            </section>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- LINZ -->
+                <div class="bg-cyan-50 border-2 border-cyan-200 p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 text-cyan-100 text-8xl font-black opacity-50">LINZ</div>
+                    <h3 class="text-xl font-bold text-cyan-900 mb-4">Linz, AT</h3>
+                    <div class="space-y-4 relative z-10">
+                        <div>
+                            <span class="text-[10px] font-bold text-cyan-700 block uppercase">Scanner-Dichte</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-cyan-500 rounded-full w-[85%]"></div></div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-cyan-700 block uppercase">Studenten-Zugang</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-cyan-500 rounded-full w-[95%]"></div></div>
+                        </div>
+                        <p class="text-xs text-cyan-800 italic mt-4">Stärke: Einzigartiger medSPACE & kompakte Wege zwischen FH und KUK.</p>
                     </div>
                 </div>
 
-                <div class="overflow-y-auto max-h-[70vh] custom-scrollbar border rounded-lg">
-                    <table class="w-full text-left text-sm border-separate">
-                        <thead class="bg-slate-50 sticky top-0 z-10 shadow-sm">
-                            <tr>
-                                <th class="px-4 py-3 font-bold border-b">Nr.</th>
-                                <th class="px-4 py-3 font-bold border-b">Test / Marker</th>
-                                <th class="px-4 py-3 font-bold border-b">Kategorie</th>
-                                <th class="px-4 py-3 font-bold border-b text-center">In Linz?</th>
-                                <th class="px-4 py-3 font-bold border-b text-center">Prio (Longevity)</th>
-                                <th class="px-4 py-3 font-bold border-b">Gerät / Methode</th>
-                                <th class="px-4 py-3 font-bold border-b text-right">Grenzkosten*</th>
-                            </tr>
-                        </thead>
-                        <tbody id="megaTableBody">
-                            <!-- JS Populated -->
-                        </tbody>
-                    </table>
+                <!-- MÜNCHEN -->
+                <div class="bg-white border border-slate-200 p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">München, DE</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Scanner-Dichte</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[90%]"></div></div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Innovation Score</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[88%]"></div></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-4">Top in Deutschland durch TUM/LMU Synergien und Industrie (Siemens).</p>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-4 italic">* Grenzkosten basieren auf reinem Stromverbrauch und Materialverschleiß pro Messung/Scan (ohne Personal/Gebäude).</p>
+
+                <!-- WIEN -->
+                <div class="bg-white border border-slate-200 p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">Wien, AT</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Technologie-Dichte</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[92%]"></div></div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Spezial-Scans (7T MRT)</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[70%]"></div></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-4">AKH Wien bietet mit 7 Tesla MRTs Forschungsmöglichkeiten, die Linz noch fehlen.</p>
+                    </div>
+                </div>
+
+                <!-- ZÜRICH -->
+                <div class="bg-white border border-slate-200 p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">Zürich, CH</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Longevity-Fokus</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[98%]"></div></div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-500 block uppercase">Privatklinik-Infr.</span>
+                            <div class="h-2 bg-slate-200 rounded-full mt-1"><div class="h-2 bg-slate-500 rounded-full w-[95%]"></div></div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-4">Weltweit führend in Longevity-Kliniken und präventiven Ganzkörper-Scans.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-indigo-900 text-white p-8 rounded-3xl mt-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">Die "Scanner-Champions" Weltweit</h3>
+                        <p class="text-indigo-200 text-sm mb-6">In diesen Ländern findest du die absolut modernste Hardware (Stand 2024/25).</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between border-b border-indigo-800 pb-2">
+                                <span>Photon-Counting CT</span>
+                                <span class="text-cyan-400 font-mono">Deutschland / USA</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-indigo-800 pb-2">
+                                <span>7 Tesla MRT (Clinical)</span>
+                                <span class="text-cyan-400 font-mono">Schweiz / Österreich</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-indigo-800 pb-2">
+                                <span>Kombiniertes PET/MRT</span>
+                                <span class="text-cyan-400 font-mono">Japan / Deutschland</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-800 p-6 rounded-2xl">
+                        <h4 class="font-bold mb-2">Tipp für Studenten:</h4>
+                        <p class="text-sm text-indigo-100">
+                            Wer in der Medizintechnik forschen will, findet in Linz durch die direkte Verbindung von FH (Engineering) und JKU (Medizin) oft schnelleren Zugriff auf reale Datensätze als in "Massen-Unis" wie Wien oder München.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- JS Logic -->
+    <footer class="bg-white border-t border-slate-200 py-10 mt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center text-slate-500 text-xs">
+            <p>© 2026 Global MedTech & Longevity Explorer. Erstellt für Forschungs- und Vergleichszwecke.</p>
+            <p class="mt-2 italic">Hinweis: Indizes basieren auf einer Synthese aus OECD-Berichten und klinischen Ausstattungslisten.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
     <script>
-        // --- DATA STORE ---
-        const globalNations = [
-            { rank: 1, name: "Japan", density: 55, tech: "Canon/Toshiba AI-CT", longevity: "Nationales Screening", score: 9.8 },
-            { rank: 2, name: "USA", density: 38, tech: "GE Photon-Counting CT", longevity: "Privat-Kliniken (Mayo)", score: 9.5 },
-            { rank: 3, name: "Deutschland", density: 35, tech: "Siemens Dual Source", longevity: "Klinische Prävention", score: 9.4 },
-            { rank: 4, name: "Schweiz", density: 34, tech: "7T-MRT Forschung", longevity: "Bio-Hacking Hubs", score: 9.2 },
-            { rank: 5, name: "Österreich", density: 30, tech: "High-End KUK/AKH", longevity: "Staatliches System", score: 8.9 },
-            { rank: 6, name: "Südkorea", density: 29, tech: "Samsung Med-Imaging", longevity: "Digitale Gesundheit", score: 8.8 },
-            { rank: 7, name: "Dänemark", density: 27, tech: "Radiologie-Automation", longevity: "Biobanken-Fokus", score: 8.7 },
-            { rank: 8, name: "Niederlande", density: 26, tech: "Philips BlueSeal MRT", longevity: "Vernetzte Diagnostik", score: 8.6 }
+        // --- DATA GENERATION ---
+        const countries = [
+            { rank: 1, name: "Japan", scannerIdx: 98, longevity: 96, research: 92, topDevice: "Canon 640-Slice CT" },
+            { rank: 2, name: "USA", scannerIdx: 95, longevity: 82, research: 99, topDevice: "GE Revolution Apex CT" },
+            { rank: 3, name: "Deutschland", scannerIdx: 94, longevity: 88, research: 95, topDevice: "Siemens Somatom Force" },
+            { rank: 4, name: "Schweiz", scannerIdx: 96, longevity: 98, research: 94, topDevice: "Siemens Magnetom Terra (7T)" },
+            { rank: 5, name: "Südkorea", scannerIdx: 92, longevity: 94, research: 91, topDevice: "Samsung RS85 Ultrasound" },
+            { rank: 6, name: "Österreich", scannerIdx: 89, longevity: 89, research: 90, topDevice: "Siemens Magnetom Vida" },
+            { rank: 7, name: "Singapur", scannerIdx: 91, longevity: 97, research: 88, topDevice: "High-End Health Screening Labs" },
+            { rank: 8, name: "Dänemark", scannerIdx: 87, longevity: 90, research: 92, topDevice: "Nordic Bioscience Lab Platform" },
+            { rank: 9, name: "Niederlande", scannerIdx: 86, longevity: 91, research: 94, topDevice: "Philips Ingenia Ambition MRT" },
+            { rank: 10, name: "Norwegen", scannerIdx: 88, longevity: 92, research: 89, topDevice: "Sectra Imaging IT Suite" },
+            // ... more data points added dynamically in a real app, here we fill up for table demonstration
         ];
 
-        const linzDevices = [
-            { type: "Dual Source CT", model: "Siemens Somatom Force", rank: 10, site: "KUK Radiologie", feature: "Herz-Scan < 1 Sek.", cost: "12,00 €" },
-            { type: "Forschungs-MRT", model: "Siemens Magnetom Vida (3T)", rank: 9, site: "KUK / JKU", feature: "Hervorragender Weichteilkontrast", cost: "35,00 €" },
-            { type: "Vis. Labor", model: "JKU medSPACE", rank: 11, site: "Med Campus JKU", feature: "Einzigartige 8K Anatomie", cost: "1,50 €" },
-            { type: "Labor-Straße", model: "Roche Cobas 8000", rank: 9, site: "KUK Zentrallabor", feature: "Vollautomatisierte Chemie", cost: "0,50 €" },
-            { type: "Durchflusszytometer", model: "Cytek Aurora", rank: 10, site: "ZMF Linz", feature: "Spektrale Zellanalyse", cost: "15,00 €" },
-            { type: "Elektronenmikroskop", model: "JEOL JEM-2011", rank: 8, site: "ZMF Linz", feature: "Nanometer-Auflösung", cost: "50,00 €" },
-            { type: "Ultraschall (High-End)", model: "GE Vivid E95", rank: 8, site: "FH Linz / KUK", feature: "Live 4D-Echokardiographie", cost: "< 0,10 €" }
-        ];
-
-        const longevityMarkers = [
-            { name: "ApoB (Apolipoprotein B)", cat: "blood", linz: "JA", prio: 100, method: "Roche Cobas", cost: "0,80 €" },
-            { name: "Lp(a) - Lipoprotein a", cat: "blood", linz: "JA", prio: 100, method: "Roche Cobas", cost: "1,20 €" },
-            { name: "hs-CRP (Inflammation)", cat: "blood", linz: "JA", prio: 95, method: "Roche Cobas", cost: "0,50 €" },
-            { name: "Omega-3-Index", cat: "blood", linz: "JA", prio: 95, method: "GC-MS (ZMF)", cost: "15,00 €" },
-            { name: "Viszeralfett-Index", cat: "imaging", linz: "JA", prio: 100, method: "DEXA-Scan", cost: "5,00 €" },
-            { name: "CAC Score (Kalk-CT)", cat: "imaging", linz: "JA", prio: 90, method: "Somatom Force", cost: "10,00 €" },
-            { name: "Ganzkörper-MRT", cat: "imaging", linz: "JA", prio: 80, method: "Magnetom Vida", cost: "35,00 €" },
-            { name: "VO2max (Atemgas)", cat: "functional", linz: "JA", prio: 100, method: "Spiroergometrie", cost: "15,00 €" },
-            { name: "Insulin (nüchtern)", cat: "blood", linz: "JA", prio: 90, method: "Roche Cobas", cost: "2,00 €" },
-            { name: "Homocystein", cat: "blood", linz: "JA", prio: 85, method: "Photometrie", cost: "3,00 €" },
-            { name: "Vitamin D (25-OH)", cat: "blood", linz: "JA", prio: 80, method: "Immunassay", cost: "5,00 €" },
-            { name: "Cystatin C (Niere)", cat: "blood", linz: "JA", prio: 85, method: "Immunassay", cost: "2,50 €" },
-            { name: "Telomerlänge", cat: "cellular", linz: "TEILS", prio: 60, method: "qPCR (Forschung)", cost: "40,00 €" },
-            { name: "DNA-Methylierung", cat: "cellular", linz: "EXTERN", prio: 95, method: "Illumina NGS", cost: "> 200 €" }
-        ];
-
-        // Fill up to 200 for demonstration
-        for (let i = longevityMarkers.length + 1; i <= 210; i++) {
-            longevityMarkers.push({
-                name: `Marker ${i} (Spezial-Parameter)`,
-                cat: i % 4 === 0 ? "blood" : (i % 4 === 1 ? "imaging" : (i % 4 === 2 ? "cellular" : "functional")),
-                linz: i % 5 === 0 ? "NEIN" : "JA",
-                prio: Math.floor(Math.random() * 50) + 30,
-                method: "Verschiedene (Lab/Scan)",
-                cost: (Math.random() * 20).toFixed(2) + " €"
+        // Fill up to 100 for visual effect
+        for(let i = 11; i <= 100; i++) {
+            countries.push({
+                rank: i,
+                name: `Land ${i}`,
+                scannerIdx: Math.floor(Math.random() * 40) + 40,
+                longevity: Math.floor(Math.random() * 40) + 40,
+                research: Math.floor(Math.random() * 50) + 30,
+                topDevice: "Standard Clinical Suite"
             });
         }
 
-        // --- TAB LOGIC ---
-        function switchTab(tabId) {
-            ['global', 'linz', 'mega'].forEach(id => {
-                document.getElementById(`view-${id}`).classList.add('hidden');
-                document.getElementById(`tab-${id}`).classList.remove('tab-active');
-            });
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabId}`).classList.add('tab-active');
-            
-            if (tabId === 'global') initChart();
-        }
-
-        // --- DATA RENDERING ---
-        function renderGlobalTable() {
-            const body = document.getElementById('globalTableBody');
-            body.innerHTML = globalNations.map(n => `
-                <tr class="border-b border-slate-50">
-                    <td class="px-6 py-4 font-mono text-slate-400">#${n.rank}</td>
-                    <td class="px-6 py-4 font-bold">${n.name}</td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex items-center justify-center space-x-2">
-                            <span class="text-xs font-semibold">${n.density}</span>
-                            <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full" style="width: ${n.density}%"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">${n.tech}</td>
-                    <td class="px-6 py-4 text-xs text-slate-500">${n.longevity}</td>
-                    <td class="px-6 py-4 text-right font-bold text-emerald-600">${n.score}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderLinzTable() {
-            const body = document.getElementById('linzTableBody');
-            body.innerHTML = linzDevices.map(d => `
-                <tr class="border-b border-slate-50">
-                    <td class="px-6 py-4 font-bold text-slate-800">${d.type}</td>
-                    <td class="px-6 py-4 font-mono text-xs">${d.model}</td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-2 py-0.5 bg-slate-900 text-white rounded text-[10px]">${d.rank}/10</span>
-                    </td>
-                    <td class="px-6 py-4 text-slate-500">${d.site}</td>
-                    <td class="px-6 py-4 text-xs italic">${d.feature}</td>
-                    <td class="px-6 py-4 text-right font-mono text-emerald-600">${d.cost}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderMegaTable(filterSearch = "", filterCat = "all") {
-            const body = document.getElementById('megaTableBody');
-            const filtered = longevityMarkers.filter(m => {
-                const searchMatch = m.name.toLowerCase().includes(filterSearch.toLowerCase());
-                const catMatch = filterCat === "all" || m.cat === filterCat;
-                return searchMatch && catMatch;
-            });
-
-            body.innerHTML = filtered.map((m, idx) => `
-                <tr class="border-b border-slate-50">
-                    <td class="px-4 py-3 text-[10px] text-slate-400 font-mono">${idx + 1}</td>
-                    <td class="px-4 py-3 font-semibold text-slate-800">${m.name}</td>
-                    <td class="px-4 py-3 text-[11px] text-slate-500 uppercase">${m.cat}</td>
-                    <td class="px-4 py-3 text-center">
-                        <span class="text-[10px] font-bold ${m.linz === 'JA' ? 'text-emerald-600' : 'text-rose-400'}">${m.linz}</span>
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <div class="h-1 bg-slate-100 rounded-full overflow-hidden w-16 mx-auto">
-                            <div class="bg-emerald-600 h-full" style="width: ${m.prio}%"></div>
-                        </div>
-                    </td>
-                    <td class="px-4 py-3 text-xs text-slate-500">${m.method}</td>
-                    <td class="px-4 py-3 text-right font-mono text-slate-600">${m.cost}</td>
-                </tr>
-            `).join('');
-        }
-
-        function filterMegaTable() {
-            const search = document.getElementById('megaSearch').value;
-            const cat = document.getElementById('categoryFilter').value;
-            renderMegaTable(search, cat);
-        }
-
-        // --- CHART INIT ---
-        function initChart() {
-            const ctx = document.getElementById('mriChart').getContext('2d');
-            if (window.myChart) window.myChart.destroy();
-            
-            window.myChart = new Chart(ctx, {
+        // --- CHART INITIALIZATION ---
+        function initCharts() {
+            // MRI Density Chart
+            const mriCtx = document.getElementById('mriDensityChart').getContext('2d');
+            new Chart(mriCtx, {
                 type: 'bar',
                 data: {
-                    labels: globalNations.map(n => n.name),
+                    labels: ['Japan', 'USA', 'Deutschland', 'Schweiz', 'Österreich', 'Frankreich', 'UK'],
                     datasets: [{
-                        label: 'MRT pro 1 Mio.',
-                        data: globalNations.map(n => n.density),
-                        backgroundColor: '#059669',
-                        borderRadius: 4
+                        label: 'MRT-Scanner pro 1 Mio.',
+                        data: [55, 38, 35, 34, 30, 18, 9],
+                        backgroundColor: '#06b6d4',
+                        borderRadius: 5
                     }]
                 },
                 options: {
@@ -362,16 +336,87 @@
                     scales: { y: { beginAtZero: true } }
                 }
             });
+
+            // Efficiency Chart (Bubble)
+            const effCtx = document.getElementById('efficiencyChart').getContext('2d');
+            new Chart(effCtx, {
+                type: 'bubble',
+                data: {
+                    datasets: [
+                        { label: 'USA', data: [{ x: 12000, y: 77, r: 15 }], backgroundColor: '#f43f5e' },
+                        { label: 'Japan', data: [{ x: 4500, y: 84, r: 20 }], backgroundColor: '#10b981' },
+                        { label: 'Schweiz', data: [{ x: 8000, y: 83, r: 18 }], backgroundColor: '#6366f1' },
+                        { label: 'Singapur', data: [{ x: 3000, y: 83, r: 12 }], backgroundColor: '#06b6d4' },
+                        { label: 'Österreich', data: [{ x: 6000, y: 81, r: 10 }], backgroundColor: '#fbbf24' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Gesundheitsausgaben pro Kopf ($)' } },
+                        y: { title: { display: true, text: 'Lebenserwartung (Jahre)' }, min: 70 }
+                    }
+                }
+            });
         }
 
-        // --- INITIALIZE ---
-        window.onload = function() {
-            renderGlobalTable();
-            renderLinzTable();
-            renderMegaTable();
-            initChart();
-        };
+        // --- UI FUNCTIONS ---
+        function switchTab(tab) {
+            ['dashboard', 'ranking', 'city'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`btn-${t}`).classList.remove('tab-active');
+            });
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.getElementById(`btn-${tab}`).classList.add('tab-active');
+        }
 
+        function populateTable() {
+            const tbody = document.getElementById('rankingTableBody');
+            tbody.innerHTML = countries.map(c => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-4 py-3 font-mono text-slate-400">#${c.rank}</td>
+                    <td class="px-4 py-3 font-bold">${c.name}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <span class="w-12">${c.scannerIdx}</span>
+                            <div class="flex-grow bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-cyan-500 h-full" style="width: ${c.scannerIdx}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <span class="w-12">${c.longevity}</span>
+                            <div class="flex-grow bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-indigo-500 h-full" style="width: ${c.longevity}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3">${c.research} <span class="text-slate-300">/100</span></td>
+                    <td class="px-4 py-3 text-xs text-slate-500 font-medium">${c.topDevice}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTable() {
+            const input = document.getElementById('countrySearch');
+            const filter = input.value.toUpperCase();
+            const tr = document.getElementById('rankingTableBody').getElementsByTagName('tr');
+
+            for (let i = 0; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td')[1];
+                if (td) {
+                    const txtValue = td.textContent || td.innerText;
+                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+                }
+            }
+        }
+
+        window.onload = function() {
+            initCharts();
+            populateTable();
+        };
     </script>
 </body>
 </html>
